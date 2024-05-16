@@ -25,6 +25,6 @@ public class History {
     private String username;
     private Date created_at;
     private State in_out;
-    private int duration_out;
-    private int duration_in;
+    private Long duration_out;
+    private Long duration_in;
 }
