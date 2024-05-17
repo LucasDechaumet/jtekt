@@ -14,7 +14,8 @@ export const appConfig: ApplicationConfig = {
       multi: true,
       deps: [KeycloakService],
     },
-    KeycloakService, provideAnimationsAsync(),
+    KeycloakService,
+    provideAnimationsAsync(),
   ],
 };
 
