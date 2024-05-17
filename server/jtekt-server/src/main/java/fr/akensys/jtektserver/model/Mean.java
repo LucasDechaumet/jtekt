@@ -22,6 +22,7 @@ public class Mean {
     @OneToMany(mappedBy = "mean")
     private List<History> histories;
 
+    private int storage;
     private String serial_number;
     private String licence_number;
     private String type;
