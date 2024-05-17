@@ -1,0 +1,48 @@
+<div class="example-header">
+  <input matInput (keyup)="applyFilter($event)" placeholder="Rechercher..." />
+</div>
+
+<mat-table #table [dataSource]="dataSource">
+  <ng-container matColumnDef="storage">
+    <mat-header-cell *matHeaderCellDef> Armoire </mat-header-cell>
+    <mat-cell *matCellDef="let mean"> {{ mean.storage }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="serial_number">
+    <mat-header-cell *matHeaderCellDef> Numéros de série </mat-header-cell>
+    <mat-cell *matCellDef="let mean"> {{ mean.serial_number }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="licence_number">
+    <mat-header-cell *matHeaderCellDef> Numéros de licence </mat-header-cell>
+    <mat-cell *matCellDef="let mean"> {{ mean.licence_number }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="type">
+    <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+    <mat-cell *matCellDef="let mean"> {{ mean.type }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="date">
+    <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+    <mat-cell *matCellDef="let mean"> {{ mean.date }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+    <mat-cell *matCellDef="let mean"> {{ mean.name }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="in_out">
+    <mat-header-cell *matHeaderCellDef> Etat </mat-header-cell>
+    <mat-cell *matCellDef="let mean"> {{ mean.in_out }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="mean_number">
+    <mat-header-cell *matHeaderCellDef> Numéros du moyen </mat-header-cell>
+    <mat-cell *matCellDef="let mean"> {{ mean.mean_number }} </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayColumns"></mat-row>
+</mat-table>
