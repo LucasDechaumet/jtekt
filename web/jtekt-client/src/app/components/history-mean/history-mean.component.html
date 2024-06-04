@@ -1,1 +1,24 @@
-<p>history-mean works!</p>
+<mat-table [dataSource]="dataSource">
+  <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayColumns"></mat-row>
+
+  <ng-container matColumnDef="username">
+    <mat-header-cell *matHeaderCellDef> Username </mat-header-cell>
+    <mat-cell *matCellDef="let history"> {{ history.username }} </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="in_out">
+    <mat-header-cell *matHeaderCellDef> State </mat-header-cell>
+    <mat-cell
+      *matCellDef="let history"
+      [style.background]="history.in_out === 'E' ? 'green' : 'red'"
+    >
+      {{ history.in_out }}
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="created_at">
+    <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
+    <mat-cell *matCellDef="let history"> {{ history.created_at }} </mat-cell>
+  </ng-container>
+</mat-table>

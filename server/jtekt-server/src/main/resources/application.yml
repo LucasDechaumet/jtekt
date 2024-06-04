@@ -1,4 +1,8 @@
 spring:
+  jackson:
+    mapper:
+      ACCEPT_CASE_INSENSITIVE_PROPERTIES: true
+
   datasource:
     url: jdbc:mysql://localhost:3306/jtekt
     username: root
@@ -8,7 +12,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     show-sql: true
 
 server:

@@ -3,6 +3,13 @@
 </div>
 
 <mat-table #table [dataSource]="dataSource">
+  <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
+  <mat-row
+    *matRowDef="let row; columns: displayColumns"
+    (click)="showHistory(row)"
+    style="cursor: pointer"
+  ></mat-row>
+
   <ng-container matColumnDef="storage">
     <mat-header-cell *matHeaderCellDef> Armoire </mat-header-cell>
     <mat-cell *matCellDef="let mean"> {{ mean.storage }} </mat-cell>
@@ -25,7 +32,7 @@
 
   <ng-container matColumnDef="date">
     <mat-header-cell *matHeaderCellDef> Date </mat-header-cell>
-    <mat-cell *matCellDef="let mean"> {{ mean.date }} </mat-cell>
+    <mat-cell *matCellDef="let mean"> {{ mean.lastDate }} </mat-cell>
   </ng-container>
 
   <ng-container matColumnDef="name">
@@ -35,14 +42,16 @@
 
   <ng-container matColumnDef="in_out">
     <mat-header-cell *matHeaderCellDef> Etat </mat-header-cell>
-    <mat-cell *matCellDef="let mean"> {{ mean.in_out }} </mat-cell>
+    <mat-cell
+      *matCellDef="let mean"
+      [style.background]="mean.in_out === 'E' ? 'green' : 'red'"
+    >
+      {{ mean.in_out }}
+    </mat-cell>
   </ng-container>
 
-  <ng-container matColumnDef="mean_number">
+  <ng-container matColumnDef="meanNumber">
     <mat-header-cell *matHeaderCellDef> Numéros du moyen </mat-header-cell>
-    <mat-cell *matCellDef="let mean"> {{ mean.mean_number }} </mat-cell>
+    <mat-cell *matCellDef="let mean"> {{ mean.meanNumber }} </mat-cell>
   </ng-container>
-
-  <mat-header-row *matHeaderRowDef="displayColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayColumns"></mat-row>
 </mat-table>

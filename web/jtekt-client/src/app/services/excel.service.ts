@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { ExcelData } from '../models/excel-data';
 
 @Injectable({
   providedIn: 'root',
@@ -42,28 +43,39 @@ export class ExcelService {
     saveAs(blob, this.FILENAME);
   }
 
-  createJSONfromExcelFile(file: File) {
-    if (!file) {
-      console.error('Aucun fichier sélectionné.');
-      return;
-    }
+  extractJSONfromExcelFile(file: File): Promise<ExcelData[]> {
+    return new Promise((resolve, reject) => {
+      if (!file) {
+        console.error('Aucun fichier sélectionné.');
+        reject('Aucun fichier sélectionné.');
+        return;
+      }
 
-    const reader: FileReader = new FileReader();
+      const reader: FileReader = new FileReader();
 
-    reader.onload = (e: any) => {
-      const data: any = new Uint8Array(e.target.result);
-      const workbook: XLSX.WorkBook = XLSX.read(data, { type: 'array' });
+      reader.onload = (e: any) => {
+        const data: any = new Uint8Array(e.target.result);
+        const workbook: XLSX.WorkBook = XLSX.read(data, {
+          type: 'array',
+          dateNF: 'yyyy-mm-dd',
+        });
 
-      const firstSheetName = workbook.SheetNames[0];
-      const worksheet: XLSX.WorkSheet = workbook.Sheets[firstSheetName];
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet: XLSX.WorkSheet = workbook.Sheets[firstSheetName];
 
-      const jsonData: any[] = XLSX.utils.sheet_to_json(worksheet, {
-        header: 'A',
-      });
+        const excelData: ExcelData[] = XLSX.utils.sheet_to_json(worksheet, {
+          header: 'A',
+          rawNumbers: false,
+          defval: null,
+        });
+        resolve(excelData);
+      };
 
-      console.log('Données JSON extraites du fichier Excel :', jsonData);
-    };
+      reader.onerror = (error) => {
+        reject(error);
+      };
 
-    reader.readAsArrayBuffer(file);
+      reader.readAsArrayBuffer(file);
+    });
   }
 }
