@@ -1,16 +1,20 @@
 package fr.akensys.jtektserver.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import fr.akensys.jtektserver.model.Mean;
+import fr.akensys.jtektserver.model.MeanMobileRequest;
+import fr.akensys.jtektserver.model.MeanWebRequest;
 import fr.akensys.jtektserver.services.MeanService;
 import lombok.RequiredArgsConstructor;
 
@@ -21,22 +25,32 @@ public class MeanController {
 
     private final MeanService meanService;
 
-    @PostMapping("/addTable")
-    public void addTable(@RequestBody Mean[] means) {
+    @PostMapping("/addMeansFromExcel")
+    public void addMeansFromExcel(@RequestBody ArrayList<MeanWebRequest> means) {
         try {
-            if (!meanService.isStateVerified(means)) {
-                throw new Exception("The means have different states");
-            }
-            meanService.calculateDuration(means);
-            meanService.changeState(means);
+            meanService.addMeansFromExcel(means);
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println(e.getMessage());
         }
-        // verify if all the means have th same state
-        // if not, throw an exception
-        // calculate the duration_out or duration_in for each mean
-        // change the state of the means
-        // save the means in the database
+    }
+
+    @GetMapping("/getAllMeanNumber")
+    public ResponseEntity<?> getAllMeanNumber() {
+        try {
+            List<String> meanNumbers = meanService.getAllMeanNumbers();
+            return ResponseEntity.ok(meanNumbers);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur s'est produite lors de la récupération des numéros de moyens.");
+        }
+    }
+
+    @PostMapping("/addMeansFromMobile")
+    public void addMeansFromMobile(@RequestBody MeanMobileRequest[] means) {
+        try {
+            meanService.addMeansFromMobile(means);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @GetMapping("/getAllMeans")
@@ -47,5 +61,11 @@ public class MeanController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur s'est produite lors de la récupération des moyens.");
         }
+    }
+
+    @GetMapping("/getMeanByMeanNumber/{meanNumber}")
+    public ResponseEntity<?> getMeanByMeanNumber(@PathVariable String meanNumber) {
+        Mean mean = meanService.getMeanByMeanNumber(meanNumber);
+        return ResponseEntity.ok(mean);
     }
 }

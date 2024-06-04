@@ -1,5 +1,6 @@
 package fr.akensys.jtektserver.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -7,8 +8,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestController {
 
-    @RequestMapping("/testServer")
-    public String testServer() {
-        return "Hello World";
+    @RequestMapping("/server")
+    public ResponseEntity<String> testServer() {
+        return ResponseEntity.ok("Server is running");
     }
 }

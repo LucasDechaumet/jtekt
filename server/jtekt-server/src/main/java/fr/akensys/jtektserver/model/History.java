@@ -1,18 +1,24 @@
 package fr.akensys.jtektserver.model;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class History {
 
     @Id
@@ -20,10 +26,11 @@ public class History {
     private Long id;
 
     @ManyToOne
+    @JsonBackReference
     private Mean mean;
 
     private String username;
-    private Date created_at;
+    private LocalDateTime created_at;
     private State in_out;
     private Long duration_out;
     private Long duration_in;

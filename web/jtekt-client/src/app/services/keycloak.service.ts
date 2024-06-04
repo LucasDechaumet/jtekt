@@ -13,7 +13,7 @@ export class KeycloakService {
     if (!this._keycloak) {
       this._keycloak = new Keycloak({
         url: 'http://localhost:8080',
-        realm: 'Jtekt',
+        realm: 'jtekt',
         clientId: 'jtekt',
       });
     }
@@ -42,5 +42,9 @@ export class KeycloakService {
 
   logout() {
     return this.keycloak?.logout();
+  }
+
+  hasRole(role: string) {
+    return this.keycloak?.hasRealmRole(role);
   }
 }
