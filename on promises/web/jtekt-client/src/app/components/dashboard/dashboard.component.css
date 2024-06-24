@@ -1,0 +1,11 @@
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.p-input-icon-left input {
+  padding-left: 2.25rem;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  height: 2.25rem;
+}

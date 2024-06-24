@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:jtekt_mobile/models/mean_model.dart';
 import 'package:jtekt_mobile/services/api.dart';
 
@@ -47,7 +48,7 @@ class _MeanState extends State<Mean> {
         meanNumber: meanController.text,
       ));
       meanController.clear();
-      Future.delayed(const Duration(milliseconds: 200), () {
+      Future.delayed(const Duration(milliseconds: 500), () {
         meanFocusNode.requestFocus();
       });
     });
@@ -66,6 +67,34 @@ class _MeanState extends State<Mean> {
                 Navigator.of(context).pop();
               },
               child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showRemoveModal(MeanModel mean) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Suppression"),
+          content: Text(
+              "Voulez-vous supprimer ce moyen de la liste : ${mean.meanNumber} ?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Annuler"),
+            ),
+            TextButton(
+              onPressed: () {
+                deleteMean(mean);
+                Navigator.of(context).pop();
+              },
+              child: const Text("Supprimer"),
             ),
           ],
         );
@@ -127,6 +156,7 @@ class _MeanState extends State<Mean> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: TextField(
+                    onTap: cancel,
                     focusNode: nameFocusNode,
                     controller: nameController,
                     decoration: InputDecoration(
@@ -143,9 +173,11 @@ class _MeanState extends State<Mean> {
                     ),
                     style: const TextStyle(fontSize: 18),
                     onSubmitted: (_) {
-                      meanFocusNode.requestFocus();
                       setState(() {
                         isNameSelected = true;
+                      });
+                      Future.delayed(const Duration(milliseconds: 500), () {
+                        meanFocusNode.requestFocus();
                       });
                     },
                   ),
@@ -187,7 +219,7 @@ class _MeanState extends State<Mean> {
                                 subtitle: Text(mean.meanNumber),
                                 trailing: GestureDetector(
                                   onTap: () {
-                                    deleteMean(mean);
+                                    showRemoveModal(mean);
                                   },
                                   child: const Icon(Icons.delete),
                                 ),
@@ -197,31 +229,32 @@ class _MeanState extends State<Mean> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    ElevatedButton(
-                      onPressed: cancel,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                if (isNameSelected)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      ElevatedButton(
+                        onPressed: cancel,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                        ),
+                        child: const Text(
+                          "Changer de nom",
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
-                      child: const Text(
-                        "Changer de nom",
-                        style: TextStyle(color: Colors.white),
+                      ElevatedButton(
+                        onPressed: validation,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                        ),
+                        child: Text(
+                          "Valider (${meanList.length})",
+                          style: const TextStyle(color: Colors.white),
+                        ),
                       ),
-                    ),
-                    ElevatedButton(
-                      onPressed: validation,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                      ),
-                      child: Text(
-                        "Valider (${meanList.length})",
-                        style: const TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
                 const SizedBox(height: 20),
               ],
             ),
@@ -270,15 +303,30 @@ class _MeanState extends State<Mean> {
       nameController.clear();
       isNameSelected = false;
     });
-    Future.delayed(const Duration(milliseconds: 200), () {
+    Future.delayed(const Duration(milliseconds: 500), () {
       nameFocusNode.requestFocus();
     });
   }
 
-  void validation() {
-    // send data to server
-    Api.sendData(meanList);
-    // clear all fields
+  void validation() async {
+    bool success = await Api.sendData(meanList);
+    if (!mounted) return;
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Données envoyées avec succès!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Échec de l\'envoi des données.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+
     meanController.clear();
     nameController.clear();
     setState(() {

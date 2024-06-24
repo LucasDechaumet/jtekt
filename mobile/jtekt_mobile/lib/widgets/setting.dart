@@ -46,7 +46,9 @@ class _SettingState extends State<Setting> {
     setState(() {
       isLoading = false;
       ipAddressIsValid = isValid;
-      validationMessage = isValid ? 'Adresse IP valide' : 'Adresse IP invalide';
+      validationMessage = isValid
+          ? 'Adresse IP valide'
+          : 'Adresse IP invalide ou port incorrect';
     });
 
     if (isValid) {
@@ -56,11 +58,6 @@ class _SettingState extends State<Setting> {
 
   @override
   Widget build(BuildContext context) {
-    // return SingleChildScrollView(
-    //   child: Column(
-    //     children: [Expanded(child: Column())],
-    //   ),
-    // );
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
@@ -72,7 +69,7 @@ class _SettingState extends State<Setting> {
                 controller: adressController,
                 decoration: const InputDecoration(
                   border: OutlineInputBorder(),
-                  labelText: "http://",
+                  labelText: "Adresse IP et port du serveur",
                 ),
               ),
               const SizedBox(height: 20),
@@ -86,7 +83,7 @@ class _SettingState extends State<Setting> {
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       )
                     : const Text(
-                        "Tester",
+                        "Tester la connexion",
                         style: TextStyle(color: Colors.white),
                       ),
               ),

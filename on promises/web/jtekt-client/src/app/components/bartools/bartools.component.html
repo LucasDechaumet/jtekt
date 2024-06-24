@@ -1,0 +1,33 @@
+<div *ngIf="isAdmin" class="container">
+  <p-fileUpload
+    mode="basic"
+    name="demo[]"
+    url="https://www.primefaces.org/cdn/api/upload.php"
+    accept=".xlsx, .xls"
+    (onUpload)="upload($event)"
+    [auto]="true"
+    chooseLabel="Upload"
+    [style]="{ height: '35px' }"
+  ></p-fileUpload>
+  <p-button
+    label="Download"
+    (click)="downloadExcel()"
+    [style]="{ height: '35px' }"
+  ></p-button>
+  <p-dropdown
+    [options]="types"
+    [(ngModel)]="selectedType"
+    optionLabel="name"
+    placeholder="Sélectionner un type"
+    [style]="{ height: '35px' }"
+    (onChange)="onTypeChange()"
+  ></p-dropdown>
+  <p-calendar
+    [(ngModel)]="rangeDates"
+    selectionMode="range"
+    [readonlyInput]="true"
+    [showIcon]="true"
+    [style]="{ height: '35px' }"
+    (onSelect)="onDateSelect()"
+  ></p-calendar>
+</div>

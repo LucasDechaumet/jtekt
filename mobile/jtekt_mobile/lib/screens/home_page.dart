@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text(
           "TC_MEANS : Gestion des moyens",
-          style: TextStyle(fontSize: 15),
+          style: TextStyle(fontSize: 20),
         ),
         centerTitle: true,
       ),

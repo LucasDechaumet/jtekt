@@ -12,7 +12,7 @@ class Api {
     return savedIpAddress;
   }
 
-  static Future<void> sendData(List<MeanModel> data) async {
+  static Future<bool> sendData(List<MeanModel> data) async {
     try {
       final String baseUrl = await _loadIpAddress();
       final response = await http.post(
@@ -24,23 +24,25 @@ class Api {
       );
 
       if (response.statusCode == 200) {
-        // Succès
-        print('Data sent successfully');
+        return true;
       } else {
-        // Échec
-        print('Failed to send data. Status code: ${response.statusCode}');
+        return false;
       }
     } catch (e) {
       print('Error sending data: $e');
+      return false;
     }
   }
 
-  static Future<bool> testIpAddress(baseUrl) async {
+  static Future<bool> testIpAddress(String baseUrl) async {
     try {
       print('$defaultIpAddress$baseUrl');
-      final response =
-          await http.get(Uri.parse('$defaultIpAddress$baseUrl/test/server'));
-      return response.statusCode == 200 ? true : false;
+      final response = await http
+          .get(
+            Uri.parse('$defaultIpAddress$baseUrl/test/server'),
+          )
+          .timeout(const Duration(seconds: 6)); // Timeout after 10 seconds
+      return response.statusCode == 200;
     } catch (e) {
       print('Error connecting: $e');
       return false;
