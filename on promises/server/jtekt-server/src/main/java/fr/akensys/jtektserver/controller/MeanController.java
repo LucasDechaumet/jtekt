@@ -1,10 +1,9 @@
 package fr.akensys.jtektserver.controller;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,14 +11,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import fr.akensys.jtektserver.model.Mean;
+import fr.akensys.jtektserver.entity.Mean;
 import fr.akensys.jtektserver.model.MeanMobileRequest;
-import fr.akensys.jtektserver.model.MeanTotalDuration;
 import fr.akensys.jtektserver.model.MeanWebRequest;
 import fr.akensys.jtektserver.model.MeansWithinIntervalRequest;
 import fr.akensys.jtektserver.services.MeanService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -29,13 +26,14 @@ public class MeanController {
 
     private final MeanService meanService;
 
+    @DeleteMapping("/delete/{meanNumber}")
+    public void deleteMean(@PathVariable String meanNumber) {
+        meanService.deleteMean(meanNumber);
+    }
+
     @PostMapping("/addMeansFromExcel")
-    public void addMeansFromExcel(@RequestBody ArrayList<MeanWebRequest> means) {
-        try {
+    public void addMeansFromExcel(@RequestBody List<MeanWebRequest> means) {
             meanService.addMeansFromExcel(means);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
     }
 
     @GetMapping("/getAllMeanNumber")

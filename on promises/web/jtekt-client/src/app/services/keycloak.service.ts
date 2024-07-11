@@ -12,7 +12,7 @@ export class KeycloakService {
   get keycloak() {
     if (!this._keycloak) {
       this._keycloak = new Keycloak({
-        url: 'http://192.168.1.111:8080',
+        url: 'http://localhost:8080',
         realm: 'jtekt',
         clientId: 'jtekt',
       });

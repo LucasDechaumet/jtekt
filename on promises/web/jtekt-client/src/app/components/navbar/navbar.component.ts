@@ -3,6 +3,7 @@ import { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { ToastModule } from 'primeng/toast';
 import { KeycloakService } from '../../services/keycloak.service';
+import { SharedDataService } from '../../services/shared-data.service';
 
 @Component({
   selector: 'app-navbar',
@@ -14,7 +15,10 @@ import { KeycloakService } from '../../services/keycloak.service';
 export class NavbarComponent implements OnInit {
   navList: MenuItem[] | undefined;
 
-  constructor(private keycloakService: KeycloakService) {}
+  constructor(
+    private keycloakService: KeycloakService,
+    private sharedData: SharedDataService
+  ) {}
 
   ngOnInit() {
     if (this.keycloakService.hasRole('admin')) {
@@ -26,11 +30,17 @@ export class NavbarComponent implements OnInit {
               label: 'Dashboard',
               icon: 'pi pi-fw pi-home',
               routerLink: 'dashboard',
+              command: () => {
+                this.sharedData.setIsCharts(false);
+              },
             },
             {
               label: 'Graphiques',
               icon: 'pi pi-fw pi-chart-bar',
               routerLink: 'charts',
+              command: () => {
+                this.sharedData.setIsCharts(true);
+              },
             },
           ],
         },

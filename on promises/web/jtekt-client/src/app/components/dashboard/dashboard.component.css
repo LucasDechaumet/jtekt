@@ -9,3 +9,7 @@
   border: 1px solid #ced4da;
   height: 2.25rem;
 }
+
+.error-row {
+  background-color: yellow; /* Couleur de fond jaune pour les lignes avec type === 'ERROR' */
+}

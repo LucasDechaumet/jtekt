@@ -1,27 +1,36 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpService } from '../../services/http.service';
 import { History } from '../../models/mean';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatFormField } from '@angular/material/form-field';
+import { Table, TableModule } from 'primeng/table';
+import { FormsModule } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
+import { TagModule } from 'primeng/tag';
+import { DateFormatPipe } from '../../pipes/date-format.pipe';
 
 @Component({
   selector: 'app-history-mean',
   standalone: true,
-  imports: [MatTableModule, MatFormField],
+  imports: [
+    FormsModule,
+    TableModule,
+    TagModule,
+    DropdownModule,
+    DateFormatPipe,
+  ],
   templateUrl: './history-mean.component.html',
   styleUrl: './history-mean.component.css',
 })
 export class HistoryMeanComponent implements OnInit {
-  displayColumns: string[] = ['username', 'created_at', 'in_out'];
+  inOutOptions = [
+    { label: 'Entrée', value: 'E' },
+    { label: 'Sortie', value: 'S' },
+  ];
 
   elementData: History[] = [];
-
-  dataSource = new MatTableDataSource(this.elementData);
+  loading: boolean = true;
 
   constructor(
-    private router: Router,
     private activatedRoute: ActivatedRoute,
     private httpService: HttpService
   ) {}
@@ -31,9 +40,24 @@ export class HistoryMeanComponent implements OnInit {
     this.httpService
       .get(`/mean/getMeanByMeanNumber/${meanNumber}`)
       .subscribe((data: any) => {
-        console.log(data);
         this.elementData = data.histories;
-        this.dataSource = new MatTableDataSource(this.elementData);
+        console.log('Data:', this.elementData);
+        this.loading = false;
       });
+  }
+
+  getInOutSeverity(inOut: string): 'success' | 'danger' | undefined {
+    switch (inOut) {
+      case 'E':
+        return 'success';
+      case 'S':
+        return 'danger';
+      default:
+        return undefined;
+    }
+  }
+
+  clear(table: Table) {
+    table.clear();
   }
 }

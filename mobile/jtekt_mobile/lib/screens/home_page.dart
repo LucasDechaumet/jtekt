@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jtekt_mobile/services/api.dart';
 import 'package:jtekt_mobile/widgets/mean.dart';
 import 'package:jtekt_mobile/widgets/setting.dart';
 
@@ -11,6 +12,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    Api.monitorBatteryState();
+    // TODO: implement initState
+    super.initState();
+  }
 
   static const List<Widget> _widget = <Widget>[Mean(), Setting()];
 

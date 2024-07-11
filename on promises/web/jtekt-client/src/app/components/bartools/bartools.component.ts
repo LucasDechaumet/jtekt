@@ -28,6 +28,7 @@ export class BartoolsComponent implements OnInit {
   selectedType: any | undefined;
   types: any[] | undefined;
   isAdmin = false;
+  isCharts = false;
   constructor(
     private excelService: ExcelService,
     private httpService: HttpService,
@@ -41,6 +42,11 @@ export class BartoolsComponent implements OnInit {
     }
     this.httpService.get('/mean/getAllMeansType').subscribe((data: any) => {
       this.types = data.map((type: any) => ({ name: type }));
+    });
+
+    this.sharedData.isCharts$.subscribe((isCharts) => {
+      console.log('isCharts :', isCharts);
+      this.isCharts = isCharts;
     });
   }
 
@@ -61,9 +67,10 @@ export class BartoolsComponent implements OnInit {
     console.log(this.excelService.extractJSONfromExcelFile(selectFile));
     this.excelService.extractJSONfromExcelFile(selectFile).then(
       (JSONdata) => {
+        console.log('Données JSON extraites :', JSONdata);
         this.httpService.post('/mean/addMeansFromExcel', JSONdata).subscribe(
           (response) => {
-            console.log('Réponse du serveur :', response);
+            location.reload();
           },
           (error) => {
             console.error("Erreur lors de l'envoi des données JSON :", error);

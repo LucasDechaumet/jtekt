@@ -13,11 +13,26 @@ import { Table, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
+import { DateFormatPipe } from '../../pipes/date-format.pipe';
+import { CommonModule } from '@angular/common';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [FormsModule, TableModule, TagModule, DropdownModule],
+  imports: [
+    FormsModule,
+    TableModule,
+    TagModule,
+    DropdownModule,
+    DateFormatPipe,
+    CommonModule,
+    ButtonModule,
+    ConfirmDialogModule,
+  ],
+  providers: [ConfirmationService],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
@@ -29,14 +44,15 @@ export class DashboardComponent implements OnInit {
   globalFilter: string = '';
 
   inOutOptions = [
-    { label: 'In', value: 'In' },
-    { label: 'Out', value: 'Out' },
+    { label: 'Entrée', value: 'E' },
+    { label: 'Sortie', value: 'S' },
   ];
 
   constructor(
     private keycloakService: KeycloakService,
     private router: Router,
-    private httpService: HttpService
+    private httpService: HttpService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -46,6 +62,7 @@ export class DashboardComponent implements OnInit {
     // Fetch data from API
     this.httpService.get('/mean/getAllMeans').subscribe((data: any) => {
       this.elementData = data;
+      console.log('Data:', this.elementData);
       this.loading = false; // Hide loading indicator once data is loaded
     });
   }
@@ -62,10 +79,31 @@ export class DashboardComponent implements OnInit {
   }
 
   onRowSelect(rowData: any) {
-    console.log('Selected Row Data:', rowData);
-    // Optionally, you can log specific fields like ID
-    console.log('Selected Row ID:', rowData.id);
-    // Perform other actions based on selected row data
+    this.router.navigate([`/history/${rowData.meanNumber}`]);
+  }
+
+  confirmDelete(mean: Mean, event: Event) {
+    event.stopPropagation();
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete ${mean.meanNumber}?`,
+      accept: () => {
+        this.onDeleteMean(mean);
+      },
+    });
+  }
+
+  fetchData(): void {
+    this.loading = true;
+    this.httpService.get('/mean/getAllMeans').subscribe((data: any) => {
+      this.elementData = data;
+      this.loading = false;
+    });
+  }
+
+  onDeleteMean(mean: Mean) {
+    this.httpService.delete(`/mean/delete/${mean.meanNumber}`).subscribe(() => {
+      this.fetchData();
+    });
   }
 
   clear(table: Table) {

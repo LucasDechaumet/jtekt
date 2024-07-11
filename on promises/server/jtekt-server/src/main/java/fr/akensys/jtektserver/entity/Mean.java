@@ -1,10 +1,11 @@
-package fr.akensys.jtektserver.model;
+package fr.akensys.jtektserver.entity;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import fr.akensys.jtektserver.model.State;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,6 +36,7 @@ public class Mean {
     private State in_out;
     private LocalDateTime lastDate;
     private String meanNumber;
+    private boolean error;
     
     @JsonManagedReference
     @OneToMany(mappedBy = "mean", cascade = CascadeType.ALL)

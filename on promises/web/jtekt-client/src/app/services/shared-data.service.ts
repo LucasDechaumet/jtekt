@@ -14,7 +14,14 @@ export class SharedDataService {
   private selectedDateSource = new BehaviorSubject<Date[]>(new Array<Date>());
   selectedDate$ = this.selectedDateSource.asObservable();
 
+  private isChartsSource = new BehaviorSubject<boolean>(false);
+  isCharts$ = this.isChartsSource.asObservable();
+
   constructor() {}
+
+  setIsCharts(isCharts: boolean) {
+    this.isChartsSource.next(isCharts);
+  }
 
   setSelectedDate(selectedDate: Date[]) {
     this.selectedDateSource.next(selectedDate);

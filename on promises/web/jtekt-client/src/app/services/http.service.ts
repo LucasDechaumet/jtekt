@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class HttpService {
-  baseURL: string = 'http://192.168.1.111:8081';
+  baseURL: string = 'http://localhost:8081';
   option: any = {
     headers: {
       'Content-Type': 'application/json',

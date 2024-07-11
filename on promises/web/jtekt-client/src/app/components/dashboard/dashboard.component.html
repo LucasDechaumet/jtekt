@@ -4,7 +4,6 @@
   dataKey="id"
   [loading]="loading"
   [paginator]="false"
-  (onRowSelect)="onRowSelect($event.data)"
   [globalFilterFields]="[
     'storage',
     'serial_number',
@@ -31,7 +30,7 @@
     <tr>
       <th>
         <div class="flex">
-          Storage
+          N°Armoire
           <p-columnFilter
             type="text"
             field="storage"
@@ -41,7 +40,7 @@
       </th>
       <th>
         <div class="flex">
-          Serial Number
+          N° SERIE
           <p-columnFilter
             type="text"
             field="serial_number"
@@ -51,7 +50,7 @@
       </th>
       <th>
         <div class="flex">
-          Licence Number
+          N° LICENCE
           <p-columnFilter
             type="text"
             field="licence_number"
@@ -71,7 +70,7 @@
       </th>
       <th>
         <div class="flex">
-          Name
+          Désignation
           <p-columnFilter
             type="text"
             field="name"
@@ -81,7 +80,7 @@
       </th>
       <th>
         <div class="flex">
-          In/Out
+          Etat
           <p-columnFilter field="in_out" matchMode="equals" display="menu">
             <ng-template
               pTemplate="filter"
@@ -107,7 +106,7 @@
       </th>
       <th>
         <div class="flex">
-          Date
+          Date de l'état
           <p-columnFilter
             type="date"
             field="date"
@@ -117,7 +116,7 @@
       </th>
       <th>
         <div class="flex">
-          Mean Number
+          Code
           <p-columnFilter
             type="text"
             field="meanNumber"
@@ -125,10 +124,14 @@
           ></p-columnFilter>
         </div>
       </th>
+      <th *ngIf="isAdmin"></th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-mean>
-    <tr>
+    <tr
+      (click)="onRowSelect(mean)"
+      [ngClass]="{ 'error-row': mean.type === 'ERROR' }"
+    >
       <td>{{ mean.storage }}</td>
       <td>{{ mean.serial_number }}</td>
       <td>{{ mean.licence_number }}</td>
@@ -140,13 +143,27 @@
           [severity]="getInOutSeverity(mean.in_out)"
         ></p-tag>
       </td>
-      <td>{{ mean.date }}</td>
+      <td>{{ mean.lastDate | dateFormat }}</td>
       <td>{{ mean.meanNumber }}</td>
+      <td>
+        <button
+          pButton
+          type="button"
+          icon="pi pi-trash"
+          class="p-button-danger"
+          (click)="confirmDelete(mean, $event)"
+        ></button>
+      </td>
     </tr>
   </ng-template>
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td colspan="8">Pas de moyens trouvés</td>
+      <td colspan="9">Pas de moyens trouvés</td>
     </tr>
   </ng-template>
 </p-table>
+
+<p-confirmDialog
+  header="Confirmation"
+  icon="pi pi-exclamation-triangle"
+></p-confirmDialog>

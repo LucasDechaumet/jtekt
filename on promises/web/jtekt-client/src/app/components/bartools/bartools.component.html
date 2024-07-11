@@ -15,6 +15,7 @@
     [style]="{ height: '35px' }"
   ></p-button>
   <p-dropdown
+    *ngIf="isCharts"
     [options]="types"
     [(ngModel)]="selectedType"
     optionLabel="name"
@@ -23,6 +24,7 @@
     (onChange)="onTypeChange()"
   ></p-dropdown>
   <p-calendar
+    *ngIf="isCharts"
     [(ngModel)]="rangeDates"
     selectionMode="range"
     [readonlyInput]="true"
