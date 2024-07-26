@@ -60,6 +60,16 @@
       </th>
       <th>
         <div class="flex">
+          Désignation
+          <p-columnFilter
+            type="text"
+            field="name"
+            display="menu"
+          ></p-columnFilter>
+        </div>
+      </th>
+      <th>
+        <div class="flex">
           Type
           <p-columnFilter
             type="text"
@@ -70,10 +80,10 @@
       </th>
       <th>
         <div class="flex">
-          Désignation
+          Code
           <p-columnFilter
             type="text"
-            field="name"
+            field="meanNumber"
             display="menu"
           ></p-columnFilter>
         </div>
@@ -106,6 +116,16 @@
       </th>
       <th>
         <div class="flex">
+          Utilisateur
+          <p-columnFilter
+            type="text"
+            field="meanNumber"
+            display="menu"
+          ></p-columnFilter>
+        </div>
+      </th>
+      <th>
+        <div class="flex">
           Date de l'état
           <p-columnFilter
             type="date"
@@ -114,16 +134,7 @@
           ></p-columnFilter>
         </div>
       </th>
-      <th>
-        <div class="flex">
-          Code
-          <p-columnFilter
-            type="text"
-            field="meanNumber"
-            display="menu"
-          ></p-columnFilter>
-        </div>
-      </th>
+
       <th *ngIf="isAdmin"></th>
     </tr>
   </ng-template>
@@ -135,17 +146,18 @@
       <td>{{ mean.storage }}</td>
       <td>{{ mean.serial_number }}</td>
       <td>{{ mean.licence_number }}</td>
-      <td>{{ mean.type }}</td>
       <td>{{ mean.name }}</td>
+      <td>{{ mean.type }}</td>
+      <td>{{ mean.meanNumber }}</td>
       <td>
         <p-tag
           [value]="mean.in_out"
           [severity]="getInOutSeverity(mean.in_out)"
         ></p-tag>
       </td>
+      <td>{{ getLastUsername(mean) }}</td>
       <td>{{ mean.lastDate | dateFormat }}</td>
-      <td>{{ mean.meanNumber }}</td>
-      <td>
+      <td *ngIf="isAdmin">
         <button
           pButton
           type="button"

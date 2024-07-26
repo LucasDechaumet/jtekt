@@ -67,6 +67,12 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+  getLastUsername(mean: Mean): string {
+    return mean.in_out === 'E' || mean.histories.length === 0
+      ? ''
+      : mean.histories[mean.histories.length - 1].username || '';
+  }
+
   getInOutSeverity(inOut: string): 'success' | 'danger' | undefined {
     switch (inOut) {
       case 'E':

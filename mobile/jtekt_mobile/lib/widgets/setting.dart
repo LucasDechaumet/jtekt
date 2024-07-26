@@ -24,7 +24,6 @@ class _SettingState extends State<Setting> {
   Future<void> _loadIpAddress() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? savedIpAddress = prefs.getString('ipAddress');
-    print("savedIpAddress: $savedIpAddress");
     if (savedIpAddress != null) {
       setState(() {
         adressController.text = savedIpAddress;
@@ -41,7 +40,6 @@ class _SettingState extends State<Setting> {
     setState(() {
       isLoading = true;
     });
-    print(adressController.text);
     bool isValid = await Api.testIpAddress(adressController.text);
     setState(() {
       isLoading = false;

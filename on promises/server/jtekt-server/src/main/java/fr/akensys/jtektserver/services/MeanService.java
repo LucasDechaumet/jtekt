@@ -68,13 +68,13 @@ public class MeanService {
             for (MeanWebRequest meanRequest : means) {
                 Mean mean = Mean.builder()
                         .storage(meanRequest.getA())
-                        .serial_number(meanRequest.getC())
-                        .licence_number(meanRequest.getD())
+                        .serial_number(meanRequest.getB())
+                        .licence_number(meanRequest.getC())
+                        .name(meanRequest.getD())
                         .type(meanRequest.getE())
-                        .name(meanRequest.getB())
-                        .in_out(State.valueOf(meanRequest.getG()))
-                        .lastDate(convertStringInLocalDateTime(meanRequest.getI()))
                         .meanNumber(meanRequest.getF())
+                        .in_out(State.valueOf(meanRequest.getG()))
+                        .lastDate(convertStringInLocalDateTime(meanRequest.getH()))
                         .histories(new ArrayList<>())
                         .error(false)
                         .build();

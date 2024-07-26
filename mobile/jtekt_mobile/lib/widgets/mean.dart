@@ -165,7 +165,7 @@ class _MeanState extends State<Mean> {
                             width: 4),
                       ),
                       border: const OutlineInputBorder(),
-                      labelText: ("Nom"),
+                      labelText: ("Utilisateur"),
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(color: greyColor, width: 2),
                       ),
@@ -238,7 +238,7 @@ class _MeanState extends State<Mean> {
                           backgroundColor: Colors.blue,
                         ),
                         child: const Text(
-                          "Changer de nom",
+                          "Changer de nom d'utilisateur",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
@@ -320,7 +320,8 @@ class _MeanState extends State<Mean> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Échec de l\'envoi des données.'),
+          content:
+              Text('Brancher le PDA sur le socle pour l\'envoi des données.'),
           backgroundColor: Colors.red,
         ),
       );

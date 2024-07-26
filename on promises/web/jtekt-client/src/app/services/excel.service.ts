@@ -9,21 +9,19 @@ import { ExcelData } from '../models/excel-data';
 export class ExcelService {
   data: any = [
     [
-      'Numéro armoire',
-      'Nom',
-      'Numéro de série',
-      'Numéro de license',
-      'Type',
-      'Numéro de moyen',
-      'Etat',
-      'Utilisateur',
-      'Date',
+      'N°Armoire',
+      'N° SERIE',
+      'N° LICENCE',
+      'DESIGNATION',
+      'TYPE',
+      'CODE',
+      'ETAT',
     ],
   ];
 
   FILENAME = 'dataTemplate.xlsx';
-  COLUMNWIDTH = 20;
-  COLUMNCOUNT = 9;
+  COLUMNWIDTH = 30;
+  COLUMNCOUNT = 7;
 
   createAndDownloadExcelFile() {
     const worksheet: XLSX.WorkSheet = XLSX.utils.aoa_to_sheet(this.data);

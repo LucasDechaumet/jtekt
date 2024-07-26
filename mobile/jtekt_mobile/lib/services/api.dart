@@ -52,14 +52,12 @@ class Api {
         return false;
       }
     } catch (e) {
-      print('Error sending data: $e');
       await _saveFailedData(data);
       return false;
     }
   }
 
   static Future<void> retryFailedData() async {
-    print("CHARGINGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
     List<List<MeanModel>> failedDataList = await _loadFailedData();
     for (var data in failedDataList) {
       bool success = await sendData(data);
@@ -79,7 +77,6 @@ class Api {
           .timeout(const Duration(seconds: 6));
       return response.statusCode == 200;
     } catch (e) {
-      print('Error connecting: $e');
       return false;
     }
   }
@@ -88,8 +85,7 @@ class Api {
     final battery = Battery();
     battery.onBatteryStateChanged.listen((BatteryState state) {
       if (state == BatteryState.charging) {
-        Future.delayed(const Duration(seconds: 30), () {
-          print('Retrying failed data');
+        Future.delayed(const Duration(seconds: 15), () {
           retryFailedData();
         });
       }
