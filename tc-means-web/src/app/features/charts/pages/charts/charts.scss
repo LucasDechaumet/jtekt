@@ -1,0 +1,75 @@
+:host {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
+.charts-page {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.filters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+p-treeselect {
+  width: min(420px, 45vw);
+}
+
+p-datepicker {
+  width: 260px;
+}
+
+:host ::ng-deep {
+  .p-treeselect,
+  .p-datepicker-input {
+    min-height: 2rem;
+    font-size: 0.875rem;
+  }
+
+  .p-treeselect-label,
+  .p-datepicker-input {
+    padding-block: 0.25rem;
+  }
+}
+
+.chart-panel {
+  min-height: 0;
+  padding: 0 1rem 1rem;
+}
+
+p-chart {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
+.tree-node-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tree-node-label {
+  max-width: 320px;
+}
+
+@media (max-width: 760px) {
+  .filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  p-treeselect,
+  p-datepicker {
+    width: 100%;
+  }
+}

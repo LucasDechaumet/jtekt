@@ -1,0 +1,65 @@
+<div class="login-container" [style.background-image]="'url(' + imageLogin() + ')'">
+  <form class="form-wrapper" (ngSubmit)="login()">
+    <div class="form-logo">
+      <img alt="logo" [src]="logoLogin()" />
+    </div>
+
+    <div class="meta-data">
+      <span class="app-name">{{ appName }}</span>
+    </div>
+
+    <p-fluid class="form-inputs">
+      <p-floatlabel variant="on">
+        <input
+          pInputText
+          type="text"
+          id="username"
+          name="username"
+          [(ngModel)]="loginRequest.username"
+          autocomplete="username"
+          required
+        />
+        <label for="username">Nom d'utilisateur</label>
+      </p-floatlabel>
+
+      <p-floatlabel variant="on">
+        <div class="password-field">
+          <input
+            pInputText
+            class="password-input"
+            [type]="showPassword() ? 'text' : 'password'"
+            id="password"
+            name="password"
+            [(ngModel)]="loginRequest.password"
+            autocomplete="current-password"
+            required
+          />
+          <button
+            class="password-toggle"
+            type="button"
+            [attr.aria-label]="
+              showPassword() ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+            "
+            (click)="toggleShowPassword()"
+          >
+            <span
+              [class]="showPassword() ? 'pi pi-eye' : 'pi pi-eye-slash'"
+              aria-hidden="true"
+            ></span>
+          </button>
+        </div>
+        <label for="password">Mot de passe</label>
+      </p-floatlabel>
+    </p-fluid>
+
+    <div class="form-login">
+      <p-button
+        label="Se connecter"
+        icon="pi pi-sign-in"
+        [loading]="isLoading()"
+        type="submit"
+        styleClass="w-full"
+      />
+    </div>
+  </form>
+</div>

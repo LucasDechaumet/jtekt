@@ -1,0 +1,32 @@
+<section class="charts-page">
+  <div class="filters">
+    <p-treeselect
+      [options]="meanTree()"
+      [ngModel]="selectedNodes()"
+      (ngModelChange)="selectedNodes.set($event ?? [])"
+      selectionMode="checkbox"
+      placeholder="Sélectionner les moyens"
+      display="chip"
+      appendTo="body"
+      size="small"
+    >
+      <ng-template let-node #item>
+        <span class="tree-node-label" [title]="node.label">{{ node.label }}</span>
+      </ng-template>
+    </p-treeselect>
+
+    <p-datepicker
+      [ngModel]="dateRange()"
+      (ngModelChange)="dateRange.set($event ?? [])"
+      selectionMode="range"
+      dateFormat="dd/mm/yy"
+      placeholder="Période"
+      appendTo="body"
+      size="small"
+    />
+  </div>
+
+  <div class="chart-panel">
+    <p-chart type="bar" [data]="chartData()" [options]="chartOptions()" />
+  </div>
+</section>

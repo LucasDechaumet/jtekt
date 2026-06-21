@@ -1,0 +1,111 @@
+<section class="error-page">
+  <p-table
+    [value]="errors()"
+    [loading]="isLoading()"
+    loadingIcon="none"
+    [stripedRows]="true"
+    [scrollable]="true"
+    scrollHeight="flex"
+    size="small"
+    dataKey="id"
+  >
+    <ng-template #caption>
+      <div class="table-caption">
+        <span class="search-field">
+          <i class="pi pi-search" aria-hidden="true"></i>
+          <input
+            pInputText
+            type="search"
+            placeholder="Rechercher"
+            [value]="searchTerm()"
+            (input)="searchTerm.set($any($event.target).value)"
+          />
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template #header>
+      <tr>
+        <th>Code</th>
+        <th>Etat</th>
+        <th>Utilisateur</th>
+        <th>Date</th>
+        <th aria-label="Actions"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-error>
+      <tr>
+        <td>
+          <p-tag [value]="error.code" [class]="'error-code-tag'" />
+        </td>
+        <td>
+          <p-tag
+            [value]="error.state"
+            [class]="error.state === 'Entrée' ? 'state-tag-in' : 'state-tag-out'"
+          />
+        </td>
+        <td>{{ error.borrower }}</td>
+        <td>{{ error.date }}</td>
+        <td>
+          <div class="row-actions">
+            <p-button
+              icon="pi pi-check"
+              [rounded]="true"
+              [text]="true"
+              severity="success"
+              ariaLabel="Corriger"
+              size="small"
+              (onClick)="correctError(error)"
+            />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #loadingbody>
+      @for (row of skeletonRows; track $index) {
+        <tr>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+        </tr>
+      }
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="5">Aucune erreur trouvée.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</section>
+
+<p-dialog
+  header="Corriger"
+  [visible]="isCorrectionVisible()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="edit-dialog"
+  (visibleChange)="!$event && cancelCorrection()"
+>
+  <div class="edit-form">
+    <label>
+      <span>Code</span>
+      <input pInputText [ngModel]="draftCode()" (ngModelChange)="draftCode.set($event)" />
+    </label>
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Annuler" [text]="true" severity="secondary" (onClick)="cancelCorrection()" />
+    <p-button
+      label="Corriger"
+      icon="pi pi-check"
+      [loading]="isCorrecting()"
+      (onClick)="saveCorrection()"
+    />
+  </ng-template>
+</p-dialog>

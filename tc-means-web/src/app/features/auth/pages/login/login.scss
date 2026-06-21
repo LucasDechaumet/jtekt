@@ -1,0 +1,95 @@
+:host {
+  display: block;
+  height: 100dvh;
+  width: 100vw;
+}
+
+.login-container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.form-wrapper {
+  position: relative;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 40px;
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-logo {
+  display: flex;
+  justify-content: center;
+
+  img {
+    height: 60px;
+    object-fit: contain;
+  }
+}
+
+.meta-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.app-name {
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--p-primary-color);
+}
+
+.form-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.password-field {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.875rem;
+  z-index: 1;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--p-text-muted-color);
+  cursor: pointer;
+}
+
+.password-input {
+  padding-right: 2.75rem;
+}
+
+.form-login {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}

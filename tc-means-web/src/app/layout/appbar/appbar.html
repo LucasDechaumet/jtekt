@@ -1,0 +1,21 @@
+<p-menubar [model]="items()" breakpoint="1280px">
+  <ng-template #start>
+    <img [src]="logoSrc" alt="logo" class="appbar_logo" />
+  </ng-template>
+  <ng-template #end>
+    <div class="appbar_end">
+      <p class="appbar_username">
+        <i class="pi pi-user"></i>
+        {{ username() }}
+      </p>
+      <p-button
+        icon="pi pi-sign-out"
+        [rounded]="true"
+        [text]="true"
+        pTooltip="Déconnexion"
+        tooltipPosition="bottom"
+        (onClick)="logout()"
+      />
+    </div>
+  </ng-template>
+</p-menubar>

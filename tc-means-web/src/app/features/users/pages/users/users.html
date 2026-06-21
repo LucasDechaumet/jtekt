@@ -1,0 +1,142 @@
+<section class="users-page">
+  <p-table
+    [value]="users()"
+    [loading]="isLoading()"
+    loadingIcon="none"
+    [stripedRows]="true"
+    [scrollable]="true"
+    scrollHeight="flex"
+    size="small"
+    dataKey="id"
+  >
+    <ng-template #caption>
+      <div class="table-caption">
+        <span class="search-field">
+          <i class="pi pi-search" aria-hidden="true"></i>
+          <input
+            pInputText
+            type="search"
+            placeholder="Rechercher"
+            [value]="searchTerm()"
+            (input)="searchTerm.set($any($event.target).value)"
+          />
+        </span>
+        <p-button
+          icon="pi pi-plus"
+          pTooltip="Ajouter un utilisateur"
+          tooltipPosition="bottom"
+          ariaLabel="Ajouter un utilisateur"
+          (onClick)="addUser()"
+        />
+      </div>
+    </ng-template>
+
+    <ng-template #header>
+      <tr>
+        <th>Nom d'utilisateur</th>
+        <th>Role</th>
+        <th aria-label="Actions"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-user>
+      <tr>
+        <td>
+          <span class="truncate" [title]="user.username">{{ user.username }}</span>
+        </td>
+        <td>{{ user.role }}</td>
+        <td>
+          <div class="row-actions">
+            <p-button
+              icon="pi pi-pencil"
+              [rounded]="true"
+              [text]="true"
+              severity="secondary"
+              ariaLabel="Modifier"
+              (onClick)="editUser(user)"
+            />
+            <p-button
+              icon="pi pi-trash"
+              [rounded]="true"
+              [text]="true"
+              severity="danger"
+              ariaLabel="Supprimer"
+              (onClick)="deleteUser(user)"
+            />
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template #loadingbody>
+      @for (row of skeletonRows; track $index) {
+        <tr>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+        </tr>
+      }
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td colspan="3">Aucun utilisateur trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</section>
+
+<p-confirmdialog />
+
+<p-dialog
+  [header]="formTitle()"
+  [visible]="isFormVisible()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="edit-dialog"
+  (visibleChange)="!$event && cancelEdit()"
+>
+  <div class="edit-form">
+    <label>
+      <span>Nom d'utilisateur</span>
+      <input
+        pInputText
+        [ngModel]="draftUsername()"
+        (ngModelChange)="draftUsername.set($event)"
+      />
+    </label>
+    <label>
+      <span>Mot de passe</span>
+      <input
+        pInputText
+        type="password"
+        autocomplete="new-password"
+        [ngModel]="draftPassword()"
+        (ngModelChange)="draftPassword.set($event)"
+      />
+      @if (passwordHint()) {
+        <small class="field-hint">{{ passwordHint() }}</small>
+      }
+    </label>
+    <label>
+      <span>Role</span>
+      <p-select
+        [options]="roles"
+        [appendTo]="'body'"
+        [ngModel]="draftRole()"
+        (ngModelChange)="draftRole.set($event)"
+      />
+    </label>
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Annuler" [text]="true" severity="secondary" (onClick)="cancelEdit()" />
+    <p-button
+      label="Enregistrer"
+      icon="pi pi-check"
+      [loading]="isSaving()"
+      (onClick)="saveEdit()"
+    />
+  </ng-template>
+</p-dialog>

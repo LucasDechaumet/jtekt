@@ -1,0 +1,334 @@
+<section class="means-page">
+  <p-table
+    [value]="means()"
+    [loading]="isMeansLoading()"
+    loadingIcon="none"
+    [stripedRows]="true"
+    [scrollable]="true"
+    scrollHeight="flex"
+    size="small"
+    dataKey="id"
+    [selection]="selectedMeans()"
+    (selectionChange)="selectedMeans.set($event)"
+    [tableStyle]="{'table-layout': 'fixed', 'width': '100%'}"
+
+  >
+    <ng-template #caption>
+      <div class="table-caption">
+        <span class="search-field">
+          <i class="pi pi-search" aria-hidden="true"></i>
+          <input
+            pInputText
+            type="search"
+            placeholder="Rechercher"
+            [value]="searchTerm()"
+            (input)="searchTerm.set($any($event.target).value)"
+          />
+        </span>
+        @if (isAdmin()) {
+          <p-button
+            icon="pi pi-plus"
+            pTooltip="Ajouter un moyen"
+            tooltipPosition="bottom"
+            ariaLabel="Ajouter un moyen"
+            (onClick)="addMean()"
+          />
+          <p-button
+            icon="pi pi-file-excel"
+            severity="success"
+            pTooltip="Ajouter un excel de moyen"
+            tooltipPosition="bottom"
+            ariaLabel="Ajouter un excel de moyen"
+            (onClick)="importMeansExcel()"
+          />
+          <p-button
+            icon="pi pi-download"
+            severity="secondary"
+            pTooltip="Extraire les moyens"
+            tooltipPosition="bottom"
+            ariaLabel="Extraire les moyens"
+            [loading]="isExporting()"
+            (onClick)="extractMeans()"
+          />
+        }
+      </div>
+    </ng-template>
+
+    <ng-template #header>
+      <tr>
+        <th class="selection-column">
+          <p-tableHeaderCheckbox />
+        </th>
+        <th>N° Armoire</th>
+        <th class="name-column">Désignation</th>
+        <th>N° Série</th>
+        <th>N° Licence</th>
+        <th class="narrow-column">Type</th>
+        <th class="narrow-column">Code</th>
+        <th class="etat-column">Etat</th>
+        <th>Utilisateur</th>
+        <th>Date</th>
+        @if (isAdmin()) {
+          <th aria-label="Actions"></th>
+        }
+      </tr>
+    </ng-template>
+
+    <ng-template #body let-mean>
+      <tr class="clickable-row" (click)="openHistory(mean)">
+        <td class="selection-column" (click)="$event.stopPropagation()">
+          <p-tableCheckbox [value]="mean" />
+        </td>
+        <td>{{ mean.storageNumber }}</td>
+        <td class="name-column">
+          <span class="truncate" [title]="mean.designation">{{ mean.designation }}</span>
+        </td>
+        <td>{{ mean.serieNumber }}</td>
+        <td>{{ mean.licenceNumber }}</td>
+        <td class="narrow-column">{{ mean.type }}</td>
+        <td class="narrow-column">{{ mean.code }}</td>
+        <td class="etat-column">
+          <p-tag
+            [value]="mean.state === 'Entrée' ? 'E' : 'S'"
+            [class]="mean.state === 'Entrée' ? 'state-tag-in' : 'state-tag-out'"
+          />
+        </td>
+        <td>{{ mean.borrower }}</td>
+        <td>{{ mean.updatedAt }}</td>
+        @if (isAdmin()) {
+          <td>
+            <div class="row-actions" (click)="$event.stopPropagation()">
+              <p-button
+                icon="pi pi-pencil"
+                [rounded]="true"
+                [text]="true"
+                severity="secondary"
+                ariaLabel="Modifier"
+                (onClick)="editMean(mean)"
+              />
+              <p-button
+                icon="pi pi-trash"
+                [rounded]="true"
+                [text]="true"
+                severity="danger"
+                ariaLabel="Supprimer"
+                (onClick)="deleteMean(mean)"
+              />
+            </div>
+          </td>
+        }
+      </tr>
+    </ng-template>
+
+    <ng-template #loadingbody>
+      @for (row of skeletonRows; track $index) {
+        <tr>
+          <td class="selection-column"><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td class="name-column"><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          <td><p-skeleton height="1.5rem" /></td>
+          @if (isAdmin()) {
+            <td><p-skeleton height="1.5rem" /></td>
+          }
+        </tr>
+      }
+    </ng-template>
+
+    <ng-template #emptymessage>
+      <tr>
+        <td [attr.colspan]="isAdmin() ? 11 : 10">Aucun moyen trouvé.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</section>
+
+<p-confirmdialog />
+
+<p-dialog
+  [header]="formTitle()"
+  [visible]="isFormVisible()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="edit-dialog"
+  (visibleChange)="!$event && cancelEdit()"
+>
+  <div class="edit-form">
+    <label>
+      <span>Désignation</span>
+      <input
+        pInputText
+        [ngModel]="draftDesignation()"
+        (ngModelChange)="draftDesignation.set($event)"
+      />
+    </label>
+    <label>
+      <span>Type</span>
+      <input pInputText [ngModel]="draftType()" (ngModelChange)="draftType.set($event)" />
+    </label>
+    <label>
+      <span>Code</span>
+      <input pInputText [ngModel]="draftCode()" (ngModelChange)="draftCode.set($event)" />
+    </label>
+    <label>
+      <span>N° Série</span>
+      <input
+        pInputText
+        [ngModel]="draftSerieNumber()"
+        (ngModelChange)="draftSerieNumber.set($event)"
+      />
+    </label>
+    <label>
+      <span>N° Licence</span>
+      <input
+        pInputText
+        [ngModel]="draftLicenceNumber()"
+        (ngModelChange)="draftLicenceNumber.set($event)"
+      />
+    </label>
+    <label>
+      <span>N° Armoire</span>
+      <input
+        pInputText
+        [ngModel]="draftStorageNumber()"
+        (ngModelChange)="draftStorageNumber.set($event)"
+      />
+    </label>
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Annuler" [text]="true" severity="secondary" (onClick)="cancelEdit()" />
+    <p-button label="Enregistrer" icon="pi pi-check" (onClick)="saveEdit()" />
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  header="Importer des moyens"
+  [visible]="isImportVisible()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="import-dialog"
+  (visibleChange)="!$event && closeImport()"
+>
+  <div class="import-content">
+    <div class="import-format">
+      <span>Colonnes obligatoires dans cet ordre :</span>
+      <code>N° Armoire, Désignation, N° Série, N° Licence, Type, Code, Etat, Utilisateur, Date</code>
+      <span>Etat : E pour Entrée, S pour Sortie.</span>
+    </div>
+
+    <div class="import-actions">
+      <p-button
+        label="Télécharger le modèle"
+        icon="pi pi-download"
+        severity="secondary"
+        (onClick)="downloadExcelTemplate()"
+      />
+      <p-fileupload
+        mode="basic"
+        chooseLabel="Choisir un fichier Excel"
+        chooseIcon="pi pi-file-excel"
+        accept=".xlsx,.xls"
+        [auto]="false"
+        [customUpload]="true"
+        (onSelect)="onExcelSelected($event)"
+      />
+    </div>
+
+    @if (importErrors().length) {
+      <div class="import-errors">
+        @for (error of importErrors(); track error) {
+          <p>{{ error }}</p>
+        }
+      </div>
+    }
+
+
+  </div>
+
+  <ng-template #footer>
+    <p-button label="Annuler" [text]="true" severity="secondary" (onClick)="closeImport()" />
+    <p-button
+      label="Importer"
+      icon="pi pi-check"
+      [disabled]="!selectedExcelFile()"
+      [loading]="isImporting()"
+      (onClick)="importValidatedMeans()"
+    />
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [header]="historyTitle()"
+  [visible]="isHistoryVisible()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '92vw', height: '92vh' }"
+  styleClass="history-dialog"
+  (visibleChange)="!$event && closeHistory()"
+>
+  <div class="history-content">
+    @if (isHistoryVisible()) {
+    <p-table
+      [value]="historyEntries()"
+      [loading]="isHistoryLoading()"
+      loadingIcon="none"
+      [lazy]="true"
+      (onLazyLoad)="loadHistory($event)"
+      [totalRecords]="historyTotal()"
+      [stripedRows]="true"
+      [scrollable]="true"
+      scrollHeight="flex"
+      [paginator]="true"
+      [rows]="25"
+      [rowsPerPageOptions]="[25, 50, 100]"
+      size="small"
+    >
+      <ng-template #header>
+        <tr>
+          <th>Date</th>
+          <th>Utilisateur</th>
+          <th>Etat</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #loadingbody>
+        @for (row of skeletonRows; track $index) {
+          <tr>
+            <td><p-skeleton height="1.5rem" /></td>
+            <td><p-skeleton height="1.5rem" /></td>
+            <td><p-skeleton height="1.5rem" /></td>
+          </tr>
+        }
+      </ng-template>
+
+      <ng-template #body let-entry>
+        <tr>
+          <td>{{ entry.date }}</td>
+          <td>{{ entry.borrower }}</td>
+          <td>
+            <p-tag
+              [value]="entry.state"
+              [class]="entry.state === 'Entrée' ? 'state-tag-in' : 'state-tag-out'"
+            />
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="3">Aucun historique.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    }
+  </div>
+</p-dialog>
