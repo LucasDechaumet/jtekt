@@ -1,0 +1,41 @@
+services:
+  db:
+    image: mysql:local
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tc_means
+    ports:
+      - "3307:3306"
+    volumes:
+      - tc-means-db:/var/lib/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  api:
+    image: tc-means-api:local
+    environment:
+      DB_URL: jdbc:mysql://db:3306/tc_means?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: root
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: tc-means-web:local
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+
+volumes:
+  tc-means-db:

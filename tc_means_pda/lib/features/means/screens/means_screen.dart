@@ -11,11 +11,13 @@ class MeansScreen extends StatelessWidget {
     required this.targetIp,
     required this.apiClient,
     required this.pendingPayloadRepository,
+    required this.onSyncRequested,
   });
 
   final String targetIp;
   final ApiClient apiClient;
   final PendingPayloadRepository pendingPayloadRepository;
+  final Future<void> Function() onSyncRequested;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,7 @@ class MeansScreen extends StatelessWidget {
           targetIp: targetIp,
           apiClient: apiClient,
           pendingPayloadRepository: pendingPayloadRepository,
+          onSyncRequested: onSyncRequested,
         ),
       ),
     );

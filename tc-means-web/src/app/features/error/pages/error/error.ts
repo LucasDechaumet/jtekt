@@ -134,7 +134,7 @@ export class ErrorPage {
       id: api.id.toString(),
       code: api.code,
       state: api.isOut ? 'Sortie' : 'Entrée',
-      borrower: api.borrower ?? '-',
+      borrower: api.isOut ? api.borrower ?? '-' : '-',
       date: this.formatDate(new Date(api.updatedAt)),
     };
   }

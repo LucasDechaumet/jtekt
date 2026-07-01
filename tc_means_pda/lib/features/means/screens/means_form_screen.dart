@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tc_means_pda/core/api/api_client.dart';
 import 'package:tc_means_pda/features/means/models/means_action.dart';
@@ -11,12 +13,14 @@ class MeansFormScreen extends StatefulWidget {
     required this.targetIp,
     required this.apiClient,
     required this.pendingPayloadRepository,
+    required this.onSyncRequested,
   });
 
   final MeansAction action;
   final String targetIp;
   final ApiClient apiClient;
   final PendingPayloadRepository pendingPayloadRepository;
+  final Future<void> Function() onSyncRequested;
 
   @override
   State<MeansFormScreen> createState() => _MeansFormScreenState();
@@ -81,6 +85,8 @@ class _MeansFormScreenState extends State<MeansFormScreen> {
     if (status != ApiCallStatus.success) {
       await widget.pendingPayloadRepository.save(payload);
     }
+
+    unawaited(widget.onSyncRequested());
 
     if (!mounted) {
       return;

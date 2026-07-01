@@ -206,7 +206,11 @@ class ApiClient {
         ? normalizedTarget
         : 'http://$normalizedTarget';
 
-    return Uri.parse(base).replace(path: _joinPath(Uri.parse(base).path, path));
+    final uri = Uri.parse(base);
+    return uri.replace(
+      path: _joinPath(uri.path, path),
+      port: uri.hasPort ? uri.port : 8080,
+    );
   }
 
   String _joinPath(String basePath, String endpointPath) {

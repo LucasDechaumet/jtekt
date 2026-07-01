@@ -1,0 +1,24 @@
+FROM eclipse-temurin:21-jdk-jammy AS build
+
+WORKDIR /app
+
+COPY .mvn .mvn
+COPY mvnw pom.xml ./
+RUN chmod +x mvnw && ./mvnw -B dependency:go-offline
+
+COPY src src
+RUN ./mvnw -B package -DskipTests
+
+FROM eclipse-temurin:21-jre-jammy
+
+WORKDIR /app
+
+RUN useradd --create-home --shell /bin/bash appuser
+
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 8080
+
+USER appuser
+
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

@@ -29,13 +29,16 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+  static const _syncInterval = Duration(seconds: 30);
+
   late final PendingPayloadRepository _pendingPayloadRepository;
   final _battery = Battery();
   final _connectivity = Connectivity();
 
   StreamSubscription<BatteryState>? _batterySubscription;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
+  Timer? _syncTimer;
 
   int _currentIndex = 0;
   String _targetIp = '';
@@ -43,16 +46,26 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _pendingPayloadRepository = PendingPayloadRepository();
     unawaited(_init());
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _syncTimer?.cancel();
     unawaited(_batterySubscription?.cancel());
     unawaited(_connectivitySubscription?.cancel());
     _pendingPayloadRepository.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      unawaited(_syncPendingPayloads());
+    }
   }
 
   void _saveTargetIp(String ip) {
@@ -80,6 +93,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _startAutomaticSync() {
+    _syncTimer?.cancel();
+    _syncTimer = Timer.periodic(_syncInterval, (_) {
+      unawaited(_syncPendingPayloads());
+    });
+
     _connectivitySubscription = _connectivity.onConnectivityChanged.listen((
       results,
     ) {
@@ -151,6 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
         targetIp: _targetIp,
         apiClient: widget.apiClient,
         pendingPayloadRepository: _pendingPayloadRepository,
+        onSyncRequested: _syncPendingPayloads,
       ),
       SettingsScreen(
         initialIp: _targetIp,
@@ -164,6 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(child: screens[_currentIndex]),
       floatingActionButton: PendingCountFab(
         countListenable: _pendingPayloadRepository.pendingCount,
+        onSyncRequested: _syncPendingPayloads,
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,

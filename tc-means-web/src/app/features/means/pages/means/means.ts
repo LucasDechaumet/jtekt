@@ -494,7 +494,7 @@ export class Means {
       id: api.id.toString(),
       designation: api.designation,
       state: api.isOut ? 'Sortie' : 'Entrée',
-      borrower: api.borrower ?? '-',
+      borrower: api.isOut ? api.borrower ?? '-' : '-',
       type: api.type ?? '-',
       code: api.code,
       serieNumber: api.serialNumber ?? '-',

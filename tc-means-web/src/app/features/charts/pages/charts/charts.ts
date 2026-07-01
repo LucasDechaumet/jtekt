@@ -115,7 +115,10 @@ export class Charts {
           ticks: {
             mirror: true,
             autoSkip: false,
-            color: '#1f2937',
+            color: '#ffffff',
+            showLabelBackdrop: true,
+            backdropColor: '#000000',
+            backdropPadding: 4,
             font: {
               weight: 700,
             },
